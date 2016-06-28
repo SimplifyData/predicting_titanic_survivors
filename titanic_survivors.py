@@ -1,5 +1,8 @@
 import dask.dataframe as dd
 import matplotlib.pyplot as plt
+plt.interactive(False)
+import matplotlib
+matplotlib.style.use('ggplot')
 import numpy as np
 import pandas as pd
 from pandas import Series, DataFrame
@@ -72,9 +75,35 @@ def Survivors():
 
     print "\n Posterior distribution of men who survived in different pclasses\n"
 
-    print (men_survival_ratio / men_survival_ratio.sum())
+    men_post = (men_survival_ratio / men_survival_ratio.sum())
 
-    men_class_survival_counts.plot(kind = 'hist')
+    print men_post
+
+    # looking at plot of statistical variables
+
+    training_data.Fare.plot.hist()
+
+    # few out lyers in the fare histogram, such as $500 etc since most of the fare lye within $147.
+
+    plt.show()
+
+    training_data["Sex"].value_counts().plot.bar()
+
+    plt.show()
+
+    training_data.Age.plot.hist()
+
+    plt.show()
+
+    training_data['Parch'].value_counts().plot.bar()
+
+    plt.show()
+
+
+
+
+
+
 
 
 
