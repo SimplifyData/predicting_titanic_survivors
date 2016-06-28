@@ -25,6 +25,8 @@ def Survivors():
 
     men_high_fare = training_data[["Fare","Survived", "Sex","Pclass"]][training_data["Sex"]=="male"][training_data["Survived"]==1]
 
+    print "\n metrics of men who survived\n"
+
     print men_high_fare.describe()
 
     #metrics of male in pclasses
@@ -44,23 +46,23 @@ def Survivors():
     men_class_survival_counts = training_data["Pclass"][training_data["Sex"] == "male"][
         training_data["Survived"] == 1].value_counts()
 
-    print "\n metrics of men who survived"
+    print "\n metrics of men who survived\n"
 
     print men_pclass
 
-    print "\n metrics of male in pclasses"
+    print "\n metrics of male in pclasses\n"
 
     print men_class_survival
 
-    print "\n total counts for males in different pclass"
+    print "\n total counts for males in different pclass\n"
 
     print men_pclass_counts
 
-    print "\n counts of male in pclasses who survived"
+    print "\n counts of male in pclasses who survived\n"
 
     print men_class_survival_counts
 
-    print "\n Men Survival ratio in different pclasses"
+    print "\n Men Survival ratio in different pclasses\n"
 
     men_survival_ratio = (men_class_survival_counts / men_pclass_counts)
 
@@ -68,11 +70,11 @@ def Survivors():
 
     # Posterior distribution of men surviving in different classes
 
-    print "\n Posterior distribution of men who survived in different pclasses"
+    print "\n Posterior distribution of men who survived in different pclasses\n"
 
     print (men_survival_ratio / men_survival_ratio.sum())
 
-    men_class_survival_counts.plot(kind = "hist")
+    men_class_survival_counts.plot(kind = 'hist')
 
 
 
