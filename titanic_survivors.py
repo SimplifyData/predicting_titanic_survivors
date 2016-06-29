@@ -99,6 +99,22 @@ def Survivors():
 
     plt.show()
 
+    # group by mean value of the people who survived
+
+    groupby_survived = training_data[["Survived", "Age","Pclass","Fare"]].groupby("Survived").mean()
+
+    print "\n group by value of the people who survived by looking at the price of the ticket"
+
+    print groupby_survived
+
+    # pasangers survival rate accroding tot he pclass
+    
+    pclass_survived = training_data[["Pclass", "Age", "Fare", "Survived"]].groupby("Pclass").mean()
+
+    print "pasanger survival rate accorinf tot he survival rate"
+
+    print pclass_survived
+
 
 
 
