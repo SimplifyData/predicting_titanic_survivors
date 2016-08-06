@@ -519,7 +519,12 @@ def ML_Test(training_data,test_data):
 
     print prediction_df.head()
 
-    
+    path = ("/home/azafar/Projects/predicting_titanic_survivors/data/")
+
+    save_file = prediction_df.to_csv("final_df", path = path, sep=",")
+
+    print "saving results as csv"
+
 
 
 
