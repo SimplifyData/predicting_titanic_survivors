@@ -519,7 +519,7 @@ def ML_Test(training_data,test_data):
 
     print prediction_df.head()
 
-    path = ("/home/azafar/Projects/predicting_titanic_survivors/data/")
+    path = (".../predicting_titanic_survivors/data/")
 
     save_file = prediction_df.to_csv("final_df", path = path, sep=",")
 
@@ -533,9 +533,9 @@ def ML_Test(training_data,test_data):
 
 
 
-training_data = Survivors_Train('/home/azafar/Projects/predicting_titanic_survivors/data/train.csv')
+training_data = Survivors_Train('.../predicting_titanic_survivors/data/train.csv')
 
-test_data = Survivors_Test('/home/azafar/Projects/predicting_titanic_survivors/data/test.csv')
+test_data = Survivors_Test(".../predicting_titanic_survivors/data/test.csv')
 
 ml_train = ML_Train(training_data)
 
