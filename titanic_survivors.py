@@ -10,7 +10,7 @@ import re
 import sklearn
 from sklearn import cross_validation as cv
 from sklearn.linear_model import LogisticRegression
-
+from sklearn.svm import SVC
 
 
 def read_csv(file):
@@ -21,9 +21,9 @@ def read_csv(file):
     #file = raw_input("csv file path")
     return pd.read_csv(file)
 
-def Survivors():
+def Survivors_Train(data_file):
 
-    training_data = read_csv('/home/azafar/Projects/predicting_titanic_survivors/data/train.csv')
+    training_data = read_csv(data_file)
 
     print training_data.head()
 
@@ -327,7 +327,142 @@ def Survivors():
 
     print f_survival_view
 
-    #Logistic Regression
+    return training_data
+
+def Survivors_Test(data_file):
+
+    training_data = read_csv(data_file)
+
+
+    # filling the null values
+
+    print "\n any with more than 0% null values? - Yes : 1) Age, 2) Cabin 3) Embarked"
+
+    print training_data.ix[:, :].isnull().mean()
+
+    print "\n filling these nulls values with medians"
+
+    median_age = training_data["Age"].median()
+
+    print "\n median age"
+
+    print median_age
+
+    #filling in null values for Age
+
+    training_data["Age"].fillna(median_age, inplace= True)
+
+    print "\n tail of Age column"
+
+    print training_data["Age"].tail()
+
+    print "\n imputing missing values in Cabin with No Cabin"
+
+    training_data["Cabin"].fillna(0, inplace= True)
+
+    print "\n filling Embarked nulls with top value"
+
+    print "\n Embarked top value"\
+
+    print "\n Mode of Embarked"
+
+    print training_data["Embarked"].mode()
+
+    print "\n Embarked description"
+
+    print training_data["Embarked"].describe()
+
+    training_data["Embarked"].fillna(training_data["Embarked"].mode(), inplace= True)
+
+    print training_data.tail()
+
+    # converting categories in binary
+
+    print "\n Converting categories into binary values \n male = 0 , female = 1"
+
+
+    training_data.loc[training_data["Sex"]=="male", "Sex"] = 0
+
+    training_data.loc[training_data["Sex"] == "female", "Sex"] = 1
+
+    #print training_data["Sex"]
+
+    print training_data["Sex"].unique()
+
+    print "\n Embarked : categories \n 1) S = 0 , \n 2) C= 1, \n 3) Q = 2, 4) nan = 3"
+
+    print training_data["Embarked"].unique()
+
+
+    training_data.loc[training_data["Embarked"] == "S", "Embarked"] = 0
+
+    training_data.loc[training_data["Embarked"] == "C", "Embarked"] = 1
+
+    training_data.loc[training_data["Embarked"] == "Q", "Embarked"] = 2
+
+    training_data.loc[training_data["Embarked"].isnull() , "Embarked"] = 0
+
+    print training_data["Embarked"].unique()
+
+    print training_data["Embarked"].value_counts()
+
+    #cabin binary transformation
+
+    print training_data["Cabin"].unique()
+
+    #recursive - cleaning Cabin data to just the first Alphabets
+    count = 0
+
+    while count != len(training_data["Cabin"].unique()):
+        line = training_data["Cabin"].unique().tolist()[count]
+
+        #print line
+
+        if count == len(training_data["Cabin"].unique()):
+            #print str(count) + " break"
+            break
+
+        elif line == 0 or len(line) == 1:
+            count +=1
+
+            #print "add count" + str(count)
+
+        else:
+            cabin = re.findall("[A-Z]+", line)
+
+            #print cabin
+
+            training_data.loc[training_data["Cabin"] == str(line), "Cabin"] = cabin[0]
+
+            count = 0
+    print "Cabin binary data: \n  1) 0 = 0 ,\n 2) A = 1 ,\n 3) B = 2 , \n 4) C = 3 ,\n 5) D = 4 ,\n 6) E = 5 ,\n 7) F = 6 ,\n 8) G = 7 ,\n 9) T = 8 "
+
+    training_data.loc[training_data["Cabin"] == "A", "Cabin"] = 1
+
+    training_data.loc[training_data["Cabin"] == "B", "Cabin"] = 2
+
+    training_data.loc[training_data["Cabin"] == "C", "Cabin"] = 3
+
+    training_data.loc[training_data["Cabin"] == "D", "Cabin"] = 4
+
+    training_data.loc[training_data["Cabin"] == "E", "Cabin"] = 5
+
+    training_data.loc[training_data["Cabin"] == "F", "Cabin"] = 6
+
+    training_data.loc[training_data["Cabin"] == "G", "Cabin"] = 7
+
+    training_data.loc[training_data["Cabin"] == "T", "Cabin"] = 8
+
+    training_data.loc[training_data["Fare"].isnull(), "Fare"] = training_data["Fare"].mean()
+
+
+    return training_data
+
+
+
+def ML_Train(training_data):
+
+    #Logistic Regression - Training Data
 
     # initialize the algorithm
 
@@ -339,16 +474,67 @@ def Survivors():
 
     algo1 = LogisticRegression(random_state= 1)
 
-    print "\n computing the accuracy of all the corss validation folds."
+    print "\n Training Data  - computing the accuracy of all the cross validation folds."
 
-    scores = cv.cross_val_score(algo1,training_data[predictor_columns],training_data["Survived"], cv= 3)
+    scores = cv.cross_val_score(algo1,training_data[predictor_columns],training_data["Survived"], cv= 5)
 
-    print "\n computing the mean of the scores"
+    print "\n Logistic Regression Training Data- computing the mean of the scores"
 
     print (scores.mean())
 
+    print "\n Support Vector Machines Training Data"
 
-run_survivor = Survivors()
+    svc_obj =SVC(kernel="linear")
+
+    scores1 = cv.cross_val_score(svc_obj,training_data[predictor_columns],training_data["Survived"], cv= 5)
+
+    print "\n SVC - mean scores"
+
+    print scores1.mean()
+
+def ML_Test(training_data,test_data):
+
+    predictor_columns = ["Pclass", "Sex", "Age", "SibSp", "Parch", "Fare", "Embarked", "Cabin"]
+
+    print "\n is null Train and Test"
+
+    print training_data[predictor_columns].isnull().mean()
+
+    print test_data[predictor_columns].isnull().mean()
+
+    print "\n Test Data initialize the algorithm"
+
+    predictor_columns = ["Pclass", "Sex", "Age", "SibSp", "Parch", "Fare", "Embarked", "Cabin"]
+
+    lg_reg = LogisticRegression(random_state=1)
+
+    lg_reg.fit(training_data[predictor_columns],training_data["Survived"])
+
+    prediction = lg_reg.predict(test_data[predictor_columns])
+
+    print "Storing the Test Predection in a DF"
+
+    prediction_df = pd.DataFrame({ "PassengerId" : test_data["PassengerId"],
+                                   "Survived": prediction})
+
+    print prediction_df.head()
+
+    
+
+
+
+
+
+
+
+
+training_data = Survivors_Train('/home/azafar/Projects/predicting_titanic_survivors/data/train.csv')
+
+test_data = Survivors_Test('/home/azafar/Projects/predicting_titanic_survivors/data/test.csv')
+
+ml_train = ML_Train(training_data)
+
+ml_test = ML_Test(training_data,test_data)
 
 
 
