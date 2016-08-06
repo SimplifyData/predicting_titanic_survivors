@@ -229,7 +229,7 @@ def Survivors():
 
     training_data.loc[training_data["Sex"] == "female", "Sex"] = 1
 
-    print training_data["Sex"]
+    #print training_data["Sex"]
 
     print training_data["Sex"].unique()
 
@@ -277,21 +277,21 @@ def Survivors():
     while count != len(training_data["Cabin"].unique()):
         line = training_data["Cabin"].unique().tolist()[count]
 
-        print line
+        #print line
 
         if count == len(training_data["Cabin"].unique()):
-            print str(count) + " break"
+            #print str(count) + " break"
             break
 
         elif line == 0 or len(line) == 1:
             count +=1
 
-            print "add count" + str(count)
+            #print "add count" + str(count)
 
         else:
             cabin = re.findall("[A-Z]+", line)
 
-            print cabin
+            #print cabin
 
             training_data.loc[training_data["Cabin"] == str(line), "Cabin"] = cabin[0]
 
@@ -316,42 +316,12 @@ def Survivors():
 
     print training_data.head()
 
+    print "\n re Females survival analysis mean "
 
+    f_survival_view = training_data[["Pclass", "Sex", "Age", "SibSp", "Fare", "Survived", "Embarked", "Cabin"]][
+        training_data["Sex"] == 1].groupby("Survived").mean()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    print f_survival_view
 
 
 run_survivor = Survivors()
