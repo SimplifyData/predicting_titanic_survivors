@@ -6,6 +6,7 @@ matplotlib.style.use('ggplot')
 import numpy as np
 import pandas as pd
 from pandas import Series, DataFrame
+import re
 import sklearn
 
 
@@ -188,26 +189,139 @@ def Survivors():
 
     print training_data["Age"].tail()
 
-    print "\n filling Cabin with No Cabin"
+    print "\n imputing missing values in Cabin with No Cabin"
 
-    training_data["Cabin"].fillna("No Cabin Data", inplace= True)
+    training_data["Cabin"].fillna(0, inplace= True)
 
-    print "\n filling Embarked nulls with no data"
+    print "\n filling Embarked nulls with top value"
 
-    training_data["Embarked"].fillna("No Embarked Data", inplace= True)
+    print "\n Embarked top value"\
 
-    print "\n checking the tail of the df"
+    print "\n Mode of Embarked"
 
-    print training_data.tail()
+    print training_data["Embarked"].mode()
 
-    print "n\ Females survival analysis"
+    print "\n Embarked description"
 
-    f_survival_view = training_data[["Pclass", "Sex", "Age", "SibSp", "Fare", "Survived", "Cabin"]][
+    print training_data["Embarked"].describe()
+
+    training_data["Embarked"].fillna(training_data["Embarked"].mode(), inplace= True)
+
+    print "\n Females survival analysis"
+
+    f_survival_view = training_data[["Pclass", "Sex", "Age", "SibSp", "Fare", "Survived", "Embarked"]][
         training_data["Sex"] == "female"].groupby("Survived").describe()
 
     print f_survival_view
 
     print "\n Females with higher chance of survival: \n 1) (> 90%) 1 or less Siblings \n 2) Fare atleast (> 75%) $13 or higher \n 3) Passanger (75%) class 2 or lower \n 4) Age around 19-37 with 0 sibblings"
+
+    print "\n checking the tail of the df"
+
+    print training_data.tail()
+
+    # converting categories in binary
+
+    print "\n Converting categories into binary values \n male = 0 , female = 1"
+
+
+    training_data.loc[training_data["Sex"]=="male", "Sex"] = 0
+
+    training_data.loc[training_data["Sex"] == "female", "Sex"] = 1
+
+    print training_data["Sex"]
+
+    print training_data["Sex"].unique()
+
+    print "\n Embarked : categories \n 1) S = 0 , \n 2) C= 1, \n 3) Q = 2, 4) nan = 3"
+
+    print training_data["Embarked"].unique()
+
+
+    training_data.loc[training_data["Embarked"] == "S", "Embarked"] = 0
+
+    training_data.loc[training_data["Embarked"] == "C", "Embarked"] = 1
+
+    training_data.loc[training_data["Embarked"] == "Q", "Embarked"] = 2
+
+    print training_data["Embarked"].unique()
+
+    print training_data["Embarked"].value_counts()
+
+    #cabin binary transformation O^n
+    """
+
+    for num in range(0,len(training_data["Cabin"].unique())):
+        print "size" + str(training_data["Cabin"].unique().shape[0])
+
+        print num
+
+        line = str(training_data["Cabin"].unique()[num])
+
+        print line
+
+        cabin = re.findall("[A-Z]+",line)
+
+        print cabin
+
+        if len(cabin) >= 1:
+            training_data.loc[training_data["Cabin"] == line,"Cabin"] = cabin[0]
+            #training_data["Cabin"].replace(line,cabin[0])
+    """
+
+    print training_data["Cabin"].unique()
+
+    #recursive - cleaning Cabin data to just the first Alphabets
+    count = 0
+
+    while count != len(training_data["Cabin"].unique()):
+        line = training_data["Cabin"].unique().tolist()[count]
+
+        print line
+
+        if count == len(training_data["Cabin"].unique()):
+            print str(count) + " break"
+            break
+
+        elif line == 0 or len(line) == 1:
+            count +=1
+
+            print "add count" + str(count)
+
+        else:
+            cabin = re.findall("[A-Z]+", line)
+
+            print cabin
+
+            training_data.loc[training_data["Cabin"] == str(line), "Cabin"] = cabin[0]
+
+            count = 0
+    print "Cabin binary data: \n  1) 0 = 0 ,\n 2) A = 1 ,\n 3) B = 2 , \n 4) C = 3 ,\n 5) D = 4 ,\n 6) E = 5 ,\n 7) F = 6 ,\n 8) G = 7 ,\n 9) T = 8 "
+
+    training_data.loc[training_data["Cabin"] == "A", "Cabin"] = 1
+
+    training_data.loc[training_data["Cabin"] == "B", "Cabin"] = 2
+
+    training_data.loc[training_data["Cabin"] == "C", "Cabin"] = 3
+
+    training_data.loc[training_data["Cabin"] == "D", "Cabin"] = 4
+
+    training_data.loc[training_data["Cabin"] == "E", "Cabin"] = 5
+
+    training_data.loc[training_data["Cabin"] == "F", "Cabin"] = 6
+
+    training_data.loc[training_data["Cabin"] == "G", "Cabin"] = 7
+
+    training_data.loc[training_data["Cabin"] == "T", "Cabin"] = 8
+
+    print training_data.head()
+
+
+
+
+
+
+
 
 
 
