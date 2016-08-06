@@ -8,6 +8,8 @@ import pandas as pd
 from pandas import Series, DataFrame
 import re
 import sklearn
+from sklearn import cross_validation as cv
+from sklearn.linear_model import LogisticRegression
 
 
 
@@ -244,6 +246,8 @@ def Survivors():
 
     training_data.loc[training_data["Embarked"] == "Q", "Embarked"] = 2
 
+    training_data.loc[training_data["Embarked"].isnull() , "Embarked"] = 0
+
     print training_data["Embarked"].unique()
 
     print training_data["Embarked"].value_counts()
@@ -314,7 +318,7 @@ def Survivors():
 
     training_data.loc[training_data["Cabin"] == "T", "Cabin"] = 8
 
-    print training_data.head()
+
 
     print "\n re Females survival analysis mean "
 
@@ -323,10 +327,28 @@ def Survivors():
 
     print f_survival_view
 
+    #Logistic Regression
+
+    # initialize the algorithm
+
+    predictor_columns = ["Pclass", "Sex", "Age", "SibSp","Parch", "Fare","Embarked","Cabin"]
+
+    print "\n is null "
+
+    print training_data[predictor_columns].isnull().mean()
+
+    algo1 = LogisticRegression(random_state= 1)
+
+    print "\n computing the accuracy of all the corss validation folds."
+
+    scores = cv.cross_val_score(algo1,training_data[predictor_columns],training_data["Survived"], cv= 3)
+
+    print "\n computing the mean of the scores"
+
+    print (scores.mean())
+
 
 run_survivor = Survivors()
-
-
 
 
 
