@@ -156,13 +156,63 @@ def Survivors():
 
     f_m_survived = (sum_f_m[1] * survived_bysex._get_values[0], sum_f_m[0] * survived_bysex._get_values[1])
 
-    print "\n number of female and males surviving 1) !=survived 2) survived"
+    print "\n number of female and males surviving"
 
     print f_m_survived
 
     print "\n % of females and males surviving - checked"
 
     percentage_f_m_survived = f_m_survived[0] / sum_f_m[1], f_m_survived[1] / sum_f_m[0]
+
+    print percentage_f_m_survived
+
+    # filling the null values
+
+    print "\n any with more than 0% null values? - Yes : 1) Age, 2) Cabin 3) Embarked"
+
+    print training_data.ix[:, :].isnull().mean()
+
+    print "\n filling these nulls values with medians"
+
+    median_age = training_data["Age"].median()
+
+    print "\n median age"
+
+    print median_age
+
+    #filling in null values for Age
+
+    training_data["Age"].fillna(median_age, inplace= True)
+
+    print "\n tail of Age column"
+
+    print training_data["Age"].tail()
+
+    print "\n filling Cabin with No Cabin"
+
+    training_data["Cabin"].fillna("No Cabin Data", inplace= True)
+
+    print "\n filling Embarked nulls with no data"
+
+    training_data["Embarked"].fillna("No Embarked Data", inplace= True)
+
+    print "\n checking the tail of the df"
+
+    print training_data.tail()
+
+    print "n\ Females survival analysis"
+
+    f_survival_view = training_data[["Pclass", "Sex", "Age", "SibSp", "Fare", "Survived", "Cabin"]][
+        training_data["Sex"] == "female"].groupby("Survived").describe()
+
+    print f_survival_view
+
+    print "\n Females with higher chance of survival: \n 1) (> 90%) 1 or less Siblings \n 2) Fare atleast (> 75%) $13 or higher \n 3) Passanger (75%) class 2 or lower \n 4) Age around 19-37 with 0 sibblings"
+
+
+
+
+
 
 
 
