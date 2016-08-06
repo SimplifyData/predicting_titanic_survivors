@@ -12,6 +12,6 @@ The data was first explored using Pandas Data frames, and cofounding metrics wer
 A few parameters were analyzed using Naive Baye.
 The data was then imputed and cleaned, and all the null values got replaced with the parameter's mean or mode value.
 Co-founding coefficients were finalized. If they values were categorical, they were replaced with binary values.
-The training data was then computed through Logistic Regression and SVM library since the not all coefficients were continuous.
+The training data was then computed through Logistic Regression and SVM library since not the all coefficients were continuous.
 The Survival rate of the training set resulted in about 80% in prediction.
-The test data was then passed through to compute the predicted survivors and saved on a CSV file.
+The test data was then passed through to compute the predicted survivors and saved to a CSV file.
